@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCB Type Selector</title>
+    <style>
+        .config-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pcb-type-selector {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            font-weight: bold;
+        }
+
+        .pcb-type-btn {
+            border: 2px solid transparent;
+            width: 220px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f8f8f8;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+
+        .pcb-type-btn:hover {
+            border-color: blue;
+            transform: scale(1.05);
+            background-color: #e6f0ff;
+        }
+
+        .pcb-type-btn.active {
+            background-color: rgb(0, 101, 203);
+            color: white;
+            border-color: rgb(0, 101, 203);
+        }
+
+        .pcb-type-btn.active:hover {
+            transform: scale(1.05);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .option-group {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .option-group h3 {
+            margin-top: 0;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .calculate-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .boxContainer {
+            display: flex;
+            padding: 0 45px;
+            justify-content: space-between
+        }
+
+        .pcbSpecificationSelector {
+            width: 800px;
+            height: max-content;
+            margin: 0 auto;
+            background-color: #f0f0f0;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .section {
+            margin-bottom: 16px;
+            padding: 8px;
+            border: 1px solid #d1d1d1;
+            border-radius: 4px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-icon::after {
+            content: "?";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            height: 14px;
+            background-color: #e0e0e0;
+            border-radius: 50%;
+            font-size: 10px;
+            margin-left: 4px;
+            color: #555;
+        }
+
+        .option-button {
+            display: flex;
+            align-items: center;
+            padding: 4px 8px;
+            margin: 2px;
+            border: 1px solid #d1d1d1;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            background-color: #ffffff;
+            color: black;
+            box-sizing: border-box;
+        }
+
+        .option-button.selected {
+            background-color: rgb(0, 101, 203);
+            color: white;
+            border-color: rgb(0, 101, 203);
+        }
+
+        .option-button:not(.selected):hover {
+            background-color: white;
+            border-color: rgb(0, 101, 203);
+            color: black;
+        }
+
+        .option-button.selected:hover {
+            background-color: rgb(0, 101, 203);
+            border-color: rgb(0, 101, 203);
+            color: white;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 4px;
+            border: 1px solid #d1d1d1;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .flex {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .mr-2 {
+            margin-right: 8px;
+        }
+
+        .mt-2 {
+            margin-top: 8px;
+        }
+
+        .text-xs {
+            font-size: 10px;
+        }
+
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .option-button:hover {
+            background-color: white;
+            border-color: rgb(0, 101, 203);
+            color: black;
+        }
+
+        .option-button .color-swatch {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+
+        .color-button {
+            text-align: left;
+            width: auto;
+        }
+
+        .option-button:not(.selected):hover {
+            background-color: white;
+            border-color: rgb(0, 101, 203);
+            color: black;
+        }
+
+        .popup {
+            display: none;
+            position: absolute;
+            margin-top: -35px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 300px;
+            z-index: 1000;
+        }
+
+
+        .upload-container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .upload-btn {
+            background-color: #3498db;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .upload-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .upload-btn svg {
+            margin-right: 10px;
+        }
+
+        .instructions {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .instructions a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .instructions a:hover {
+            text-decoration: underline;
+        }
+
+        .hidden-input {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="config-container">
+        <div class="pcb-type-selector">
+            <div class="pcb-type-btn active" data-target=".container2">
+                <img src="https://pelectro.org/wp-content/uploads/2024/09/standard_pcb_online.png" alt="Standard PCB">
+                <div>PCB designing</div>
+            </div>
+            <div class="pcb-type-btn" data-target=".container3">
+                <img src="https://pelectro.org/wp-content/uploads/2024/09/advanced_pcb.png" alt="Advanced PCB">
+                <div>PCB manufacturing</div>
+            </div>
+            <div class="pcb-type-btn" data-target=".container5">
+                <img src="https://pelectro.org/wp-content/uploads/2024/09/flex.png" alt="FPC/Rigid-Flex">
+                <div>PCB Assembly</div>
+            </div>
+            <div class="pcb-type-btn" data-target=".container">
+                <img src="https://pelectro.org/wp-content/uploads/2024/09/smt.png" alt="Assembly">
+                <div>Microcontroler PCB</div>
+            </div>
+            <div class="pcb-type-btn" data-target=".container6">
+                <img src="https://pelectro.org/wp-content/uploads/2024/09/cnc.png" alt="CNC | 3D">
+                <div>3D printing</div>
+            </div>
+        </div>
+    </div>
+    <div class="container2" style="display: none;">
+        <div class="boxContainer">
+            <div class="pcbSpecificationSelector">
+                <div class="upload-container">
+                    <label for="file-upload" class="upload-btn" id="upload-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px"
+                            height="24px">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path d="M5 20h14v-2H5v2zm7-9l-5 5h4v4h2v-4h4l-5-5z" />
+                        </svg>
+                        Upload File
+                    </label>
+                    <input id="file-upload" type="file" class="hidden-input" accept=".png,.jpg,.jpeg,.pdf" />
+
+                    <div class="instructions" id="instructions">
+                        Accept only images (.png, .jpg) or PDFs, Max 50 MB
+                        <br>
+                        <span>All uploads are secure and confidential.</span>
+                    </div>
+
+                    <div id="error-message"></div>
+                    <div id="file-preview"></div>
+
+                    <!-- Progress Bar -->
+                    <div class="progress-bar-container" id="progress-bar-container" style="display: none;">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                </div>
+
+                <script>
+                    const fileInput = document.getElementById('file-upload');
+                    const uploadBtn = document.getElementById('upload-btn');
+                    const filePreview = document.getElementById('file-preview');
+                    const errorMessage = document.getElementById('error-message');
+                    const instructions = document.getElementById('instructions');
+                    const progressBarContainer = document.getElementById('progress-bar-container');
+                    const progressBar = document.getElementById('progress-bar');
+
+                    fileInput.addEventListener('change', handleFileUpload);
+
+                    function handleFileUpload() {
+                        const file = fileInput.files[0];
+                        const fileType = file.type;
+                        const maxSize = 50 * 1024 * 1024; // 50MB
+
+                        // Clear previous messages and preview
+                        errorMessage.textContent = '';
+                        filePreview.innerHTML = '';
+
+                        if (file.size > maxSize) {
+                            errorMessage.textContent = 'File exceeds the maximum size of 50MB.';
+                            return;
+                        }
+
+                        // Show progress bar and reset it
+                        progressBarContainer.style.display = 'block';
+                        progressBar.style.width = '0%';
+
+                        let progress = 0;
+
+                        // Simulate file upload progress
+                        const interval = setInterval(() => {
+                            progress += 10;
+                            progressBar.style.width = `${progress}%`;
+
+                            if (progress >= 100) {
+                                clearInterval(interval);
+                                handleFilePreview(file, fileType);
+                                progressBarContainer.style.display = 'none';
+                            }
+                        }, 150); // Progress simulation (1.5 seconds total)
+
+                        // Hide button while uploading
+                        uploadBtn.style.display = 'none';
+                    }
+
+                    function handleFilePreview(file, fileType) {
+                        const reader = new FileReader();
+
+                        if (fileType.startsWith('image/')) {
+                            reader.onload = function (e) {
+                                const img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.style.maxWidth = '100%';
+                                img.style.height = 'auto';
+                                filePreview.appendChild(img);
+                                instructions.style.display = 'none';
+                            };
+                            reader.readAsDataURL(file);
+                        } else if (fileType === 'application/pdf') {
+                            reader.onload = function (e) {
+                                const iframe = document.createElement('iframe');
+                                iframe.src = e.target.result;
+                                iframe.style.width = '100%';
+                                iframe.style.height = '500px'; // Adjust height if needed
+                                filePreview.appendChild(iframe);
+                                instructions.style.display = 'none';
+                            };
+                            reader.readAsDataURL(file);
+                        } else {
+                            errorMessage.textContent = 'Unsupported file type. Only images and PDFs are allowed.';
+                        }
+                    }
+                </script>
+
+                <style>
+                    .progress-bar-container {
+                        width: 100%;
+                        background-color: #f3f3f3;
+                        border-radius: 4px;
+                        margin-top: 10px;
+                    }
+
+                    .progress-bar {
+                        height: 10px;
+                        width: 0;
+                        background-color: rgb(0, 87, 173);
+                        border-radius: 4px;
+                    }
+                </style>
+
+                <h3>PCB Layout</h3>
+
+                <!-- Board Type Section -->
+                <div id="boardType" class="section">
+                    <div class="section-title">Service<span class="info-icon"
+                            data-info="Choose the type of PCB board you need."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="10">
+                            PCB Layout Design
+                        </button>
+
+                    </div>
+                </div>
+
+                <!-- Design in Panel Section -->
+                <div id="designInPanel" class="section">
+                    <div class="section-title">PCB Type<span class="info-icon"
+                            data-info="Choose the number of different designs in the panel."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="5">
+                            Regular Rigid PCB
+                        </button>
+                        <button class="option-button" data-cost="10">Flex PCB</button>
+                        <button class="option-button" data-cost="15">
+                            Power PCB
+                        </button>
+                        <button class="option-button" data-cost="20">
+                            HDI PCB
+                        </button>
+                        <button class="option-button" data-cost="25">Other
+                        </button>
+
+                    </div>
+                </div>
+                <div id="designInPanel" class="section">
+                    <div class="section-title">Layer<span class="info-icon"
+                            data-info="Choose the number of different designs in the panel."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="5">1</button>
+                        <button class="option-button" data-cost="10">2</button>
+                        <button class="option-button" data-cost="15">4</button>
+                        <button class="option-button" data-cost="20">6</button>
+                        <button class="option-button" data-cost="25">8</button>
+                        <button class="option-button" data-cost="30">10</button>
+                        <button class="option-button" data-cost="30">12</button>
+                        <button class="option-button" data-cost="30">14</button>
+                        <button class="option-button" data-cost="30">16</button>
+                        <button class="option-button" data-cost="30">18</button>
+                        <button class="option-button" data-cost="30">20</button>
+                        <button class="option-button" data-cost="30">22</button>
+                        <button class="option-button" data-cost="30">24</button>
+                        <button class="option-button" data-cost="30">26</button>
+                        <button class="option-button" data-cost="30">28</button>
+                        <button class="option-button" data-cost="30">30</button>
+                        <button class="option-button" data-cost="30">32</button>
+                        <button class="option-button" data-cost="30">34</button>
+                        <button class="option-button" data-cost="30">36</button>
+                        <button class="option-button" data-cost="30">38</button>
+                        <button class="option-button" data-cost="30">40</button>
+                        <button class="option-button" data-cost="30">42</button>
+                        <button class="option-button" data-cost="30">44</button>
+                        <button class="option-button" data-cost="30">46</button>
+                        <button class="option-button" data-cost="30">48</button>
+                        <button class="option-button" data-cost="30">50</button>
+                    </div>
+                </div>
+
+                <!-- Size Section -->
+                <div id="size" class="section">
+                    <div class="section-title">Dimensions<span class="info-icon"
+                            data-info="Enter the length and width of the PCB in millimeters."></span></div>
+                    <div class="flex">
+                        <input type="number" id="length" placeholder="Length" style="width: 80px;"
+                            class="mr-2 size-input" min="0">
+                        <span class="mr-2">X</span>
+                        <input type="number" id="width" placeholder="Width" style="width: 80px;" class="mr-2 size-input"
+                            min="0">
+                        <span class="mr-2">mm</span>
+                        <button class="option-button" data-cost="5">/button>
+                    </div>
+                </div>
+
+                <!-- Quantity Section -->
+                <div id="quantity" class="section">
+                    <div class="section-title">Pad Count<span class="info-icon"
+                            data-info="Enter the number of PCBs you need."></span></div>
+                    <input type="number" placeholder="" style="width: 80px;" id="quantity-input" value="1" min="1">
+                </div>
+
+                <!-- Layers Section -->
+                <div id="layers" class="section">
+                    <div class="section-title">Layers <span class="info-icon"
+                            data-info="Select the number of PCB layers."></span></div>
+                    <div class="flex">
+
+                        <button class="option-button selected" data-cost="10">
+                            EasyEDA Pro
+                        </button>
+                        <button class="option-button" data-cost="20">Other</button>
+
+                    </div>
+                </div>
+
+                <div id="designInPanel" class="section">
+                    <div class="section-title">File Storage
+                        <span class="info-icon" data-info="Choose the number of different designs in the panel."></span>
+                    </div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="5">Offline</button>
+
+
+                    </div>
+                </div>
+                <div id="designInPanel" class="section">
+                    <div class="section-title">Order PCBA at JLCPCB<span class="info-icon"
+                            data-info="Choose the number of different designs in the panel."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="5">Yes</button>
+                        <button class="option-button" data-cost="10">No</button>
+
+
+                    </div>
+                </div>
+                <div id="designInPanel" class="section">
+                    <div class="section-title">Component Sides<span class="info-icon"
+                            data-info="Choose the number of different designs in the panel."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="5">Top Only</button>
+                        <button class="option-button" data-cost="10">Bottom Only</button>
+                        <button class="option-button" data-cost="15">Both Side</button>
+
+
+                    </div>
+                </div>
+                <div id="designInPanel" class="section">
+                    <div class="section-title">Provide Footprint File<span class="info-icon"
+                            data-info="Choose the number of different designs in the panel."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="5">Yes</button>
+                        <button class="option-button" data-cost="10">No</button>
+
+
+                    </div>
+                </div>
+                <div id="designInPanel" class="section">
+                    <div class="section-title">Delivery Format<span class="info-icon"
+                            data-info="Choose the number of different designs in the panel."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="5">Source document</button>
+                        <button class="option-button" data-cost="10">BOM</button>
+                        <button class="option-button" data-cost="10">Gerber</button>
+                        <button class="option-button" data-cost="10">Pick & place</button>
+                        <button class="option-button" data-cost="10">Mechanical drawing (DXF)</button>
+                        <button class="option-button" data-cost="10">Fabrication layer (PDF)</button>
+                        <button class="option-button" data-cost="10">3D model (STEP, available only from EasyEDA
+                            Pro)</button>
+
+
+                    </div>
+                </div>
+                <div id="quantity" class="section">
+                    <div class="section-title">Remark<span class="info-icon"
+                            data-info="Enter the number of PCBs you need."></span></div>
+                    <input placeholder="" style="width: 280px;" id="quantity-input">
+                </div>
+
+
+
+
+
+
+
+                <!-- Total Cost Display Section -->
+                <div id="totalCostSection1" class="section">
+                    <p id="totalCostDisplay1">Total Cost: $0.00</p>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="max-width: 600px;
+                margin: 0 auto;
+                background-color: #f0f0f0;;
+                padding: 16px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 25px;">
+                    <h2 style="text-align: center; font-size: 30px;">Calculation</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Lead Time</th>
+                                <th>Unit Price</th>
+                                <th>Order Value</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>3 WD</td>
+                                <td>1116.00</td>
+                                <td>3348.00</td>
+                                <td style="white-space: nowrap;
+    display: inline-block;"><button class="add-to-cart">Add to Cart 🛒</button></td>
+                            </tr>
+                            <tr>
+                                <td>5 WD</td>
+                                <td>624.34</td>
+                                <td>1873.00</td>
+                                <td style="white-space: nowrap;
+    display: inline-block;"><button class="add-to-cart">Add to Cart 🛒</button></td>
+                            </tr>
+                            <tr>
+                                <td>7 WD</td>
+                                <td>352.34</td>
+                                <td>1057.00</td>
+                                <td style="white-space: nowrap;
+    display: inline-block;"><button class="add-to-cart">Add to Cart 🛒</button></td>
+                            </tr>
+                            <tr>
+                                <td>10 WD</td>
+                                <td>348.67</td>
+                                <td>1046.00</td>
+                                <td style="white-space: nowrap;
+    display: inline-block;"><button class="add-to-cart">Add to Cart 🛒</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card" style="max-width: 600px;
+                margin: 0 auto;
+                background-color: #f0f0f0;;
+                padding: 16px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 25px;">
+                    <div class="info-grid">
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px; padding-top: 20px;">
+
+                            <div>GST:</div>
+                            <div>10%</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px;">
+
+                            <div>Setup Cost:</div>
+                            <div>Free</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px;">
+
+                            <div>Setup Cost:</div>
+                            <div>Free</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px; padding-bottom: 20px;">
+
+                            <div>FPT Cost:</div>
+                            <div>Free</div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+                <div class="card" style="max-width: 600px;
+                margin: 0 auto;
+                background-color: #f0f0f0;;
+                padding: 16px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 25px;">
+                    <div class="info-grid">
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px; padding-top: 20px;">
+
+                            <div>PCB Size:</div>
+                            <div>20 x 20</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px;">
+
+                            <div>Quantity:</div>
+                            <div>3 PCB</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px; padding-bottom: 20px;">
+
+                            <div>Volume In Sq. mtr:</div>
+                            <div>0.0012</div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+                <script>
+                    document.querySelectorAll('.add-to-cart').forEach(button => {
+                        button.addEventListener('click', function () {
+                            const row = this.closest('tr');
+                            const leadTime = row.cells[0].textContent;
+                            const unitPrice = row.cells[1].textContent;
+                            const orderValue = row.cells[2].textContent;
+
+                            alert(`Added to cart:\nLead Time: ${leadTime}\nUnit Price: ${unitPrice}\nOrder Value: ${orderValue}`);
+                            // Here you would typically send this data to a shopping cart system
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup for Info Icons -->
+    <div class="popup" id="infoPopup"></div>
+
+    <script>
+        // Function to calculate the cost for a specific container
+        function calculateCost(containerId) {
+            const container = document.querySelector(containerId);
+            const sections = container.querySelectorAll('.section');
+            const quantityInput = container.querySelector('input[type="number"]');
+            let totalCost = 0;
+
+            sections.forEach(section => {
+                const selectedButton = section.querySelector('.option-button.selected');
+                if (selectedButton) {
+                    const cost = parseFloat(selectedButton.getAttribute('data-cost')) || 0;
+                    totalCost += cost;
+                }
+            });
+
+            // Handle quantity
+            const quantity = parseInt(quantityInput.value) || 1;
+            totalCost *= quantity;
+
+            if (containerId === '.container5') {
+                // Add any specific calculations for Assembly Service here
+                // For example, you might want to add a base cost for assembly
+                totalCost += 50; // Example: $50 base cost for assembly
+            }
+
+            const totalCostDisplay = container.querySelector('[id^="totalCostDisplay"]');
+            if (totalCostDisplay) {
+                totalCostDisplay.textContent = `Total Cost: $${totalCost.toFixed(2)}`;
+            }
+        }
+
+        // Function to handle button selection for a specific container
+        function handleButtonSelection(event, containerId) {
+            const button = event.currentTarget;
+            const section = button.closest('.section');
+            const buttons = section.querySelectorAll('.option-button');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            calculateCost(containerId);
+        }
+
+        // Function to set up event listeners for a specific container
+        function setupContainerListeners(containerId) {
+            const container = document.querySelector(containerId);
+            const sections = container.querySelectorAll('.section');
+            const quantityInput = container.querySelector('input[type="number"]');
+
+            sections.forEach(section => {
+                const buttons = section.querySelectorAll('.option-button');
+                buttons.forEach(button => {
+                    button.addEventListener('click', (event) => handleButtonSelection(event, containerId));
+                });
+            });
+
+            if (quantityInput) {
+                quantityInput.addEventListener('input', () => calculateCost(containerId));
+            }
+        }
+
+        // Set up listeners and initial calculations for all containers
+        document.addEventListener('DOMContentLoaded', () => {
+            const containers = ['.container2', '.container3', '.container5', '.container6'];
+            containers.forEach(containerId => {
+                setupContainerListeners(containerId);
+                calculateCost(containerId);
+            });
+
+            // Set up info icon popups
+            const infoIcons = document.querySelectorAll('.info-icon');
+            const popup = document.getElementById('infoPopup');
+
+            infoIcons.forEach(icon => {
+                icon.addEventListener('mouseenter', (e) => {
+                    const info = e.target.getAttribute('data-info');
+                    popup.textContent = info;
+                    popup.style.display = 'block';
+                    const rect = e.target.getBoundingClientRect();
+                    popup.style.left = `${rect.left + window.scrollX}px`;
+                    popup.style.top = `${rect.bottom + window.scrollY + 5}px`;
+                });
+
+                icon.addEventListener('mouseleave', () => {
+                    popup.style.display = 'none';
+                });
+            });
+        });
+    </script>
+    </div>
+    <div class="container3" style="display: none;">
+        <div class="boxContainer">
+            <div class="pcbSpecificationSelector">
+                <div class="upload-container">
+                    <label for="file-upload" class="upload-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px"
+                            height="24px">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path d="M5 20h14v-2H5v2zm7-9l-5 5h4v4h2v-4h4l-5-5z" />
+                        </svg>
+                        Add gerber file
+                    </label>
+                    <input id="file-upload" type="file" class="hidden-input" accept=".zip,.rar" />
+
+                    <div class="instructions">
+                        Accept only .zip or .rar files, Max 50 MB
+                        <br>
+                        <span>All uploads are secure and confidential.</span>
+                    </div>
+                </div>
+
+                <h3>PCB Specification Selection</h3>
+
+                <!-- Board Type Section -->
+                <div id="boardType" class="section">
+                    <div class="section-title">Board type <span class="info-icon"
+                            data-info="Choose the type of PCB board you need."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="10">Single pieces</button>
+                        <button class="option-button" data-cost="20">Panel by Customer</button>
+                        <button class="option-button" data-cost="30">Panel by PCBWay</button>
+                    </div>
+                </div>
+
+                <!-- Design in Panel Section -->
+                <div id="designInPanel" class="section">
+                    <div class="section-title">Different design in panel <span class="info-icon"
+                            data-info="Choose the number of different designs in the panel."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="5">1</button>
+                        <button class="option-button" data-cost="10">2</button>
+                        <button class="option-button" data-cost="15">3</button>
+                        <button class="option-button" data-cost="20">4</button>
+                        <button class="option-button" data-cost="25">5</button>
+                        <button class="option-button" data-cost="30">6</button>
+                    </div>
+                </div>
+
+                <!-- Size Section -->
+                <div id="size" class="section">
+                    <div class="section-title">Size (single) <span class="info-icon"
+                            data-info="Enter the length and width of the PCB in millimeters."></span></div>
+                    <div class="flex">
+                        <input type="number" id="length" placeholder="Length" style="width: 80px;"
+                            class="mr-2 size-input" min="0">
+                        <span class="mr-2">X</span>
+                        <input type="number" id="width" placeholder="Width" style="width: 80px;" class="mr-2 size-input"
+                            min="0">
+                        <span class="mr-2">mm</span>
+                        <button class="option-button" data-cost="5">inch → mm</button>
+                    </div>
+                </div>
+
+                <!-- Quantity Section -->
+                <div id="quantity" class="section">
+                    <div class="section-title">Quantity (single) <span class="info-icon"
+                            data-info="Enter the number of PCBs you need."></span></div>
+                    <input type="number" placeholder="pcs" style="width: 80px;" id="quantity-input" value="1" min="1">
+                </div>
+
+                <!-- Layers Section -->
+                <div id="layers" class="section">
+                    <div class="section-title">Layers <span class="info-icon"
+                            data-info="Select the number of PCB layers."></span></div>
+                    <div class="flex">
+                        <button class="option-button" data-cost="5">1 Layer</button>
+                        <button class="option-button selected" data-cost="10">2 Layers</button>
+                        <button class="option-button" data-cost="20">4 Layers</button>
+                        <button class="option-button" data-cost="30">6 Layers</button>
+                        <button class="option-button" data-cost="40">8 Layers</button>
+                        <button class="option-button" data-cost="50">10 Layers</button>
+                        <button class="option-button" data-cost="60">12 Layers</button>
+                        <button class="option-button" data-cost="70">14 Layers</button>
+                    </div>
+                </div>
+
+                <!-- Material Section -->
+                <div id="material" class="section">
+                    <div class="section-title">Material <span class="info-icon"
+                            data-info="Choose the material for the PCB."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="10"><img
+                                src="https://pelectro.org/wp-content/uploads/2024/09/1.jpg" alt="FR-4" width="20">
+                            FR-4</button>
+                        <button class="option-button" data-cost="15"><img
+                                src="https://pelectro.org/wp-content/uploads/2024/09/2.jpg" alt="Aluminum" width="20">
+                            Aluminum</button>
+                        <button class="option-button" data-cost="20"><img
+                                src="https://pelectro.org/wp-content/uploads/2024/09/3.jpg" alt="Rogers" width="20">
+                            Rogers</button>
+                        <button class="option-button" data-cost="30"><img
+                                src="https://pelectro.org/wp-content/uploads/2024/09/4.jpg" alt="HDI" width="20"> HDI
+                            (Buried/blind vias) 4-14 Layers</button>
+                        <button class="option-button" data-cost="40"><img
+                                src="https://pelectro.org/wp-content/uploads/2024/09/5.jpg" alt="Copper Base"
+                                width="20"> Copper
+                            Base</button>
+                    </div>
+                    <p class="text-xs">*Material model can be remarked below. HDI is available for 4-layer or more.</p>
+                </div>
+
+                <!-- FR4-TG Section -->
+                <div id="fr4tg" class="section">
+                    <div class="section-title">FR4-TG <span class="info-icon"
+                            data-info="Select the TG rating for FR4 material."></span></div>
+                    <div class="flex">
+                        <button class="option-button" data-cost="5">TG 130-140</button>
+                        <button class="option-button selected" data-cost="10">TG 150-160</button>
+                        <button class="option-button" data-cost="15">TG 170-180</button>
+                        <button class="option-button" data-cost="20">S1000H TG150</button>
+                        <button class="option-button" data-cost="25">S1000-2M TG170</button>
+                    </div>
+                    <p class="text-xs">*The base material of 2-layer PCBs (≥1m² area order) is automatically upgraded to
+                        S1000H
+                        TG150 for FREE with more stable and higher quality.</p>
+                </div>
+
+                <!-- Thickness Section -->
+                <div id="thickness" class="section">
+                    <div class="section-title">Thickness <span class="info-icon"
+                            data-info="Select the thickness of the PCB in mm."></span></div>
+                    <div class="flex">
+                        <button class="option-button" data-cost="5">0.2</button>
+                        <button class="option-button" data-cost="5">0.3</button>
+                        <button class="option-button" data-cost="5">0.4</button>
+                        <button class="option-button" data-cost="5">0.6</button>
+                        <button class="option-button" data-cost="5">0.8</button>
+                        <button class="option-button" data-cost="10">1.0</button>
+                        <button class="option-button" data-cost="15">1.2</button>
+                        <button class="option-button selected" data-cost="20">1.6</button>
+                        <button class="option-button" data-cost="25">2.0</button>
+                        <button class="option-button" data-cost="30">2.4</button>
+                        <button class="option-button" data-cost="35">2.6</button>
+                        <button class="option-button" data-cost="40">2.8</button>
+                        <button class="option-button" data-cost="45">3.0</button>
+                        <button class="option-button" data-cost="50">3.2</button>
+                    </div>
+                    <div class="flex mt-2">
+                        <span class="mr-2">≥1.7-8.0</span>
+                        <span class="mr-2">* Unit: mm</span>
+                        <img src="https://pelectro.org/wp-content/uploads/2024/09/thickness.png"
+                            alt="Thickness illustration">
+                    </div>
+                </div>
+
+                <!-- Solder Mask Section -->
+                <div id="solderMask" class="section">
+                    <div class="section-title">Solder mask <span class="info-icon"
+                            data-info="Choose the solder mask color you need."></span></div>
+                    <div class="flex">
+                        <button class="option-button color-button selected" data-cost="5">
+                            <span class="color-swatch" style="background-color: green; border: 1px solid black;"></span>
+                            Green
+                        </button>
+                        <button class="option-button color-button" data-cost="10">
+                            <span class="color-swatch" style="background-color: red; border: 1px solid black;"></span>
+                            Red
+                        </button>
+                        <button class="option-button color-button" data-cost="10">
+                            <span class="color-swatch"
+                                style="background-color: yellow; border: 1px solid black;"></span> Yellow
+                        </button>
+                        <button class="option-button color-button" data-cost="10">
+                            <span class="color-swatch" style="background-color: blue; border: 1px solid black;"></span>
+                            Blue
+                        </button>
+                        <button class="option-button color-button" data-cost="10">
+                            <span class="color-swatch" style="background-color: white; border: 1px solid black;"></span>
+                            White
+                        </button>
+                        <button class="option-button color-button" data-cost="10">
+                            <span class="color-swatch" style="background-color: black; border: 1px solid black;"></span>
+                            Black
+                        </button>
+                        <button class="option-button color-button" data-cost="15">
+                            <span class="color-swatch"
+                                style="background-color: purple; border: 1px solid black;"></span> Purple
+                        </button>
+                        <button class="option-button color-button" data-cost="15">
+                            <span class="color-swatch" style="background-color: #333; border: 1px solid black;"></span>
+                            Matte
+                            Black
+                        </button>
+                        <button class="option-button color-button" data-cost="15">
+                            <span class="color-swatch"
+                                style="background-color: #006400; border: 1px solid black;"></span> Matte
+                            Green
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Silkscreen Section -->
+                <div id="silkscreen" class="section">
+                    <div class="section-title">Silkscreen <span class="info-icon"
+                            data-info="Choose the silkscreen color you need."></span></div>
+                    <div class="flex">
+                        <button class="option-button color-button selected" data-cost="10">
+                            <div class="color-swatch" style="background-color: white; border: 1px solid black;"></div>
+                            White
+                        </button>
+                        <button class="option-button color-button" data-cost="12">
+                            <div class="color-swatch" style="background-color: black; border: 1px solid black;"></div>
+                            Black
+                        </button>
+                        <button class="option-button color-button" data-cost="15">
+                            <div class="color-swatch" style="background-color: yellow; border: 1px solid black;"></div>
+                            Yellow
+                        </button>
+                    </div>
+                </div>
+
+                <!-- UV Printing Section -->
+                <div id="uvPrinting" class="section">
+                    <div class="section-title">UV printing Multi-color (beta) <span class="info-icon"
+                            data-info="Choose UV printing option."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="0">None</button>
+                        <button class="option-button" data-cost="20">Single-sided: Top</button>
+                        <button class="option-button" data-cost="25">Single-sided: Bottom</button>
+                        <button class="option-button" data-cost="40">Double-sided</button>
+                    </div>
+                    <p class="text-xs mt-2">*The uploaded PCB file should contain color renderings, <a href="#">learn
+                            more
+                            >></a></p>
+                </div>
+
+                <!-- Total Cost Display Section -->
+                <div id="totalCostSection3" class="section">
+                    <p id="totalCostDisplay3">Total Cost: $0.00</p>
+                </div>
+            </div>
+
+            <div>
+                <div class="card" style="max-width: 600px;
+            margin: 0 auto;
+            background-color: #f0f0f0;;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 25px;">
+                    <h2 style="text-align: center; font-size: 30px;">Calculation</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Lead Time</th>
+                                <th>Unit Price</th>
+                                <th>Order Value</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>3 WD</td>
+                                <td>1116.00</td>
+                                <td>3348.00</td>
+                                <td style="white-space: nowrap;
+display: inline-block;"><button class="add-to-cart">Add to Cart 🛒</button></td>
+                            </tr>
+                            <tr>
+                                <td>5 WD</td>
+                                <td>624.34</td>
+                                <td>1873.00</td>
+                                <td style="white-space: nowrap;
+display: inline-block;"><button class="add-to-cart">Add to Cart 🛒</button></td>
+                            </tr>
+                            <tr>
+                                <td>7 WD</td>
+                                <td>352.34</td>
+                                <td>1057.00</td>
+                                <td style="white-space: nowrap;
+display: inline-block;"><button class="add-to-cart">Add to Cart 🛒</button></td>
+                            </tr>
+                            <tr>
+                                <td>10 WD</td>
+                                <td>348.67</td>
+                                <td>1046.00</td>
+                                <td style="white-space: nowrap;
+display: inline-block;"><button class="add-to-cart">Add to Cart 🛒</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card" style="max-width: 600px;
+            margin: 0 auto;
+            background-color: #f0f0f0;;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 25px;">
+                    <div class="info-grid">
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px; padding-top: 20px;">
+
+                            <div>GST:</div>
+                            <div>10%</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px;">
+
+                            <div>Setup Cost:</div>
+                            <div>Free</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px;">
+
+                            <div>Setup Cost:</div>
+                            <div>Free</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px; padding-bottom: 20px;">
+
+                            <div>FPT Cost:</div>
+                            <div>Free</div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+                <div class="card" style="max-width: 600px;
+            margin: 0 auto;
+            background-color: #f0f0f0;;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 25px;">
+                    <div class="info-grid">
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px; padding-top: 20px;">
+
+                            <div>PCB Size:</div>
+                            <div>20 x 20</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px;">
+
+                            <div>Quantity:</div>
+                            <div>3 PCB</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px; padding-bottom: 20px;">
+
+                            <div>Volume In Sq. mtr:</div>
+                            <div>0.0012</div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+                <script>
+                    document.querySelectorAll('.add-to-cart').forEach(button => {
+                        button.addEventListener('click', function () {
+                            const row = this.closest('tr');
+                            const leadTime = row.cells[0].textContent;
+                            const unitPrice = row.cells[1].textContent;
+                            const orderValue = row.cells[2].textContent;
+
+                            alert(`Added to cart:\nLead Time: ${leadTime}\nUnit Price: ${unitPrice}\nOrder Value: ${orderValue}`);
+                            // Here you would typically send this data to a shopping cart system
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup for Info Icons -->
+    <div class="popup" id="infoPopup"></div>
+
+    </div>
+
+    <!-- Popup for Info Icons -->
+
+
+    </div>
+
+    <div class="container5" style="display: none;">
+        <div class="boxContainer">
+            <div class="pcbSpecificationSelector">
+                <h3>Assembly Service</h3>
+
+                <!-- Board Type Section -->
+                <div id="boardType" class="section">
+                    <div class="section-title">3 flexible options<span class="info-icon"
+                            data-info="Choose the type of PCB board you need."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="10">Turnkey</button>
+                        <button class="option-button" data-cost="20">Kitted or Consigned</button>
+                        <button class="option-button" data-cost="30">Combo</button>
+                    </div>
+                </div>
+
+                <!-- Design in Panel Section -->
+                <div id="designInPanel" class="section">
+                    <div class="section-title">Board type<span class="info-icon"
+                            data-info="Choose the number of different designs in the panel."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="5">Single pieces</button>
+                        <button class="option-button" data-cost="10">Panelized PCBs</button>
+
+                    </div>
+                </div>
+
+                <div id="designInPanel" class="section">
+                    <div class="section-title">Assembly side(s)<span class="info-icon"
+                            data-info="Choose the number of different designs in the panel."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected" data-cost="5">Top side</button>
+                        <button class="option-button" data-cost="10">Bottom side</button>
+                        <button class="option-button" data-cost="15">Both sides</button>
+
+                    </div>
+                </div>
+
+                <div id="quantity" class="section">
+                    <div class="section-title">Quantity <span class="info-icon"
+                            data-info="Choose the type of PCB board you need."></span></div>
+                    <input type="number" placeholder="pcs" style="width: 180px;">
+                </div>
+
+
+
+                <div id="designInPanel" class="section">
+                    <div class="section-title">Pay attention</div>
+                    <div style="font-size: small;" class="section-title">Contains sensitive components/parts<span
+                            class="info-icon" data-info="Choose the type of PCB board you need."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected">No</button>
+                        <button class="option-button">Yes</button>
+
+                    </div>
+                </div>
+                <div id="designInPanel" class="section">
+                    <div style="font-size: small;" class="section-title">Do you accept alternatives/substitutes made in
+                        China<span class="info-icon" data-info="Choose the type of PCB board you need."></span></div>
+                    <div class="flex">
+                        <button class="option-button selected">No</button>
+                        <button class="option-button">Yes</button>
+
+                    </div>
+                </div>
+
+                <!-- Total Cost Display Section -->
+                <div id="totalCostSection" class="section">
+                    <p id="totalCostDisplay">Total Cost: $0.00</p>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="max-width: 600px;
+        margin: 0 auto;
+        background-color: #f0f0f0;;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+margin-bottom: 25px;">
+                    <h2 style="text-align: center; font-size: 30px;">Calculation</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Lead Time</th>
+                                <th>Unit Price</th>
+                                <th>Order Value</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>3 WD</td>
+                                <td>1116.00</td>
+                                <td>3348.00</td>
+                                <td style="white-space: nowrap;
+display: inline-block;"><button class="add-to-cart">Add to Cart 🛒</button></td>
+                            </tr>
+                            <tr>
+                                <td>5 WD</td>
+                                <td>624.34</td>
+                                <td>1873.00</td>
+                                <td style="white-space: nowrap;
+display: inline-block;"><button class="add-to-cart">Add to Cart 🛒</button></td>
+                            </tr>
+                            <tr>
+                                <td>7 WD</td>
+                                <td>352.34</td>
+                                <td>1057.00</td>
+                                <td style="white-space: nowrap;
+display: inline-block;"><button class="add-to-cart">Add to Cart 🛒</button></td>
+                            </tr>
+                            <tr>
+                                <td>10 WD</td>
+                                <td>348.67</td>
+                                <td>1046.00</td>
+                                <td style="white-space: nowrap;
+display: inline-block;"><button class="add-to-cart">Add to Cart 🛒</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card" style="max-width: 600px;
+        margin: 0 auto;
+        background-color: #f0f0f0;;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+margin-bottom: 25px;">
+                    <div class="info-grid">
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px; padding-top: 20px;">
+
+                            <div>GST:</div>
+                            <div>10%</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px;">
+
+                            <div>Setup Cost:</div>
+                            <div>Free</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px;">
+
+                            <div>Setup Cost:</div>
+                            <div>Free</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px; padding-bottom: 20px;">
+
+                            <div>FPT Cost:</div>
+                            <div>Free</div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+                <div class="card" style="max-width: 600px;
+        margin: 0 auto;
+        background-color: #f0f0f0;;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+margin-bottom: 25px;">
+                    <div class="info-grid">
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px; padding-top: 20px;">
+
+                            <div>PCB Size:</div>
+                            <div>20 x 20</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px;">
+
+                            <div>Quantity:</div>
+                            <div>3 PCB</div>
+                        </div>
+                        <div
+                            style="justify-content: space-between; display: flex;  padding: 10px; margin-left: 20px; margin-right: 20px; padding-bottom: 20px;">
+
+                            <div>Volume In Sq. mtr:</div>
+                            <div>0.0012</div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
+                <script>
+                    document.querySelectorAll('.add-to-cart').forEach(button => {
+                        button.addEventListener('click', function () {
+                            const row = this.closest('tr');
+                            const leadTime = row.cells[0].textContent;
+                            const unitPrice = row.cells[1].textContent;
+                            const orderValue = row.cells[2].textContent;
+
+                            alert(`Added to cart:\nLead Time: ${leadTime}\nUnit Price: ${unitPrice}\nOrder Value: ${orderValue}`);
+                            // Here you would typically send this data to a shopping cart system
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('.pcb-type-btn');
+            const containers = document.querySelectorAll('.container2, .container3, .container5, .container6');
+            function showDefaultContainer() {
+                buttons.forEach(btn => btn.classList.remove('active'));
+                buttons[0].classList.add('active');
+                containers.forEach(container => container.style.display = 'none');
+                document.querySelector(buttons[0].getAttribute('data-target')).style.display = 'block';
+            }
+            showDefaultContainer();
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    containers.forEach(container => container.style.display = 'none');
+                    const targetSelector = button.getAttribute('data-target');
+                    const targetContainer = document.querySelector(targetSelector);
+                    if (targetContainer) {
+                        targetContainer.style.display = 'block';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
