@@ -1,79 +1,57 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>webGerber</title>
-    <!-- <script src=jquery-1.8.2.min.js></script> -->
-    <!-- <script src=jquery.mousewheel.js></script> -->
-    <!-- <script src=three.min.js></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
-    <!-- <script src=Stats.js></script> -->
     <script src=https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/three.min.js></script>
     <script src=https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/jquery-1.8.2.min.js></script>
     <script src=https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/jquery.mousewheel.js></script>
-    <script src=https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/webGerberrr.js></script>
+    <!-- <script src=https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/webGerberrr.js></script> -->
     <script src=https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/ObjectControls.js></script>
     <script src=https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/Stats.js></script>
-    <script src=domcode.js></script>
-    <!-- git versions
-    <script src=https://raw.github.com/mrdoob/three.js/master/build/three.min.js></script>
-    <script src=http://mrdoob.github.com/three.js/examples/js/Stats.js></script>
-    -->
-    <!-- <script src=ObjectControls.js></script>
-    <script src=webGerberrr.js></script> -->
+    <script src=https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/newjs.js></script>
+    <script src=https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/webGerberrr.js></script>
+    <!-- <script src=domcode.js></script> --> 
+    <!-- <script src=newjs.js></script> 
+    <script src=webGerberrr.js></script>  -->
+
+
     <style>
         body {
             margin: 0;
-            /*background: #57e;*/
-            /*background: black;
-            color: white;*/
         }
-
         canvas:not(.layer) {
             position: absolute;
             left: 0;
             top: 0;
         }
-
-        html,
-        body,
-        canvas:not(.layer),
-        .main,
-        .overlay,
-        .overlay>div {
+        html, body, canvas:not(.layer), .main, .overlay, .overlay>div {
             width: 100%;
             height: 100%;
         }
-
         canvas.layer {
             display: none;
         }
-
         .main {
             display: -webkit-box;
             -webkit-box-orient: horizontal;
             -webkit-box-pack: center;
             -webkit-box-align: center;
-
             display: -moz-box;
             -moz-box-orient: horizontal;
             -moz-box-pack: center;
             -moz-box-align: center;
-
             display: box;
             box-orient: horizontal;
             box-pack: center;
             box-align: center;
-
             color: #aaa;
         }
-
         .main>* {
             border-radius: 10px;
             padding: 10px;
             border: 3px dotted #aaa;
         }
-
         .main h1 {
             margin: 0;
             -webkit-user-select: none;
@@ -81,35 +59,30 @@
             user-select: none;
             font-weight: normal;
         }
-
         .overlay {
             position: absolute;
             right: 0;
             top: 0;
             z-index: 3000;
-            background: rgba(0, 0, 0, .5);
+            background: rgba(0,0,0,.5);
             color: white;
             font-size: 1.7em;
             font-family: sans-serif;
         }
-
         .overlay>div {
             display: -webkit-box;
             -webkit-box-orient: horizontal;
             -webkit-box-pack: center;
             -webkit-box-align: center;
-
             display: -moz-box;
             -moz-box-orient: horizontal;
             -moz-box-pack: center;
             -moz-box-align: center;
-
             display: box;
             box-orient: horizontal;
             box-pack: center;
             box-align: center;
         }
-
         .controls {
             position: absolute;
             right: 0;
@@ -117,8 +90,8 @@
             padding-left: 10px;
             padding-right: 10px;
             z-index: 2000;
-            background: rgba(0, 0, 0, .5);
-            box-shadow: 0 0 .5em rgba(0, 0, 0, .9);
+            background: rgba(0,0,0,.5);
+            box-shadow: 0 0 .5em rgba(0,0,0,.9);
             -webkit-transition: all 0.4s;
             -moz-transition: all 0.4s;
             transition: all 0.4s;
@@ -126,7 +99,6 @@
             font-size: 1.04em;
             font-family: sans-serif;
         }
-
         .controls>span {
             display: block;
             font-weight: bold;
@@ -138,29 +110,33 @@
             padding-bottom: 5px;
             text-align: center;
         }
-
         .controls>div {
             overflow: hidden;
             -webkit-transition: all 0.4s;
             -moz-transition: all 0.4s;
             transition: all 0.4s;
         }
-
         .controls:not(.open) {
             border-bottom-left-radius: 5px;
         }
-
         .controls:not(.open)>div {
             height: 0;
         }
-
         .controls.open {
             height: 100%;
         }
     </style>
 </head>
-
 <body>
+    <div class="main">
+        <h1>Step 1:<br>Select gerber files</h1>
+        <input type="file" multiple accept=".zip">
+    </div>
+    <div class="overlay">
+        <div>
+            <div>Loading, please wait...</div>
+        </div>
+    </div>
+    
 </body>
-
 </html>
