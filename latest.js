@@ -351,8 +351,8 @@ $(function () {
                     <script src="https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/jquery.mousewheel.js"><\/script>
                     <script src="https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/ObjectControls.js"><\/script>
                     <script src="https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/Stats.js"><\/script>
-                    <script src="newjs.js"><\/script>
-                    <script src="webGerberrr.js"><\/script>
+    <script src=https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/latest.js></script>
+    <script src=https://cdn.jsdelivr.net/gh/nihalsaran/3D-Gerber-Viewer-master@main/latestwebgerb.js></script>
                     <style>
                         .controls {
                             position: absolute;
